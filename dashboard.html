@@ -1,0 +1,69 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | SmartLearn</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <nav class="navbar">
+    <a class="brand" href="{{ url_for('home') }}">SmartLearn</a>
+    <div class="nav-links">
+      <a href="{{ url_for('home') }}">Home</a>
+      <a href="{{ url_for('about') }}">About</a>
+      <form class="logout-form" method="POST" action="{{ url_for('logout') }}">
+        <button class="nav-button" type="submit">Logout</button>
+      </form>
+    </div>
+  </nav>
+
+  <main class="dashboard">
+    <section class="welcome-card">
+      <span class="eyebrow">YOUR LEARNING SPACE</span>
+      <h1>Welcome, {{ name }}! 👋</h1>
+      <p>Keep learning, keep growing. Discover your next book below.</p>
+    </section>
+
+    <section class="books-section">
+      <div class="section-heading left-heading">
+        <span class="eyebrow">BOOK COLLECTION</span>
+        <h2>Explore Python Books</h2>
+        <p>Discover books using the Open Library API.</p>
+      </div>
+
+      {% if error %}
+        <p class="notice">{{ error }}</p>
+      {% endif %}
+
+      <div class="book-grid">
+        {% for book in books %}
+          <article class="book-card">
+            <div class="book-icon">📘</div>
+            <h3>{{ book.get('title', 'Untitled Book') }}</h3>
+            <p class="book-author">
+              {{ book.get('author_name', ['Author not listed']) | join(', ') }}
+            </p>
+            {% if book.get('first_publish_year') %}
+              <p class="book-year">First published: {{ book['first_publish_year'] }}</p>
+            {% endif %}
+            {% if book.get('key', '').startswith('/works/') %}
+              <a href="https://openlibrary.org{{ book['key'] }}"
+                 target="_blank" rel="noopener noreferrer">
+                Explore Book →
+              </a>
+            {% endif %}
+          </article>
+        {% else %}
+          {% if not error %}
+            <p>No books found. Please try again later.</p>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">© 2026 SmartLearn · Keep exploring!</footer>
+</body>
+</html>
